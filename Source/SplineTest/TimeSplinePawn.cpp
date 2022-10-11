@@ -153,7 +153,7 @@ void ATimeSplinePawn::LoadSpline()
 		float MinDist = FLT_MAX;
 		if (Spline)
 		{
-			float Dist = FVector::Dist2D(this->GetActorLocation(), Spline->GetComponentLocation());
+			float Dist = FVector::Dist2D(OtherActor->GetActorLocation(), Spline->GetComponentLocation());
 			if (Dist < MinDist)
 			{
 				SplineComponent = Spline;
