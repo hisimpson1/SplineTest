@@ -27,7 +27,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void StartMovieTimeline();
-	void SetOtherActor(AActor* Actor);
+	bool SetOtherActor(); //false이면 블루프린트를 사용 한다.
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,4 +60,8 @@ protected:
 	float Duration;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"))
 	float StartOffset;
+
+private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> BoxBlueprint;
 };

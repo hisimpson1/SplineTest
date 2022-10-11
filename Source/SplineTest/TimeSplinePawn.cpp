@@ -10,6 +10,11 @@
 #include "Components/SplineComponent.h"
 //#include "UObject/UObjectGlobals.h"
 
+bool GetBluePrintVariable(UObject* Target, FString VariableName, int& OutValue);
+bool GetBluePrintVariable(UObject* Target, FString VariableName, bool& OutValue);
+
+#pragma optimize( "", off )
+
 // Sets default values
 ATimeSplinePawn::ATimeSplinePawn() 
 {
@@ -20,6 +25,13 @@ ATimeSplinePawn::ATimeSplinePawn()
 	StartOffset = 0.0f;
 	OtherActor = nullptr;
 
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> BoxBP(TEXT("Blueprint'/Game/Blueprints/Box_BP.Box_BP'"));
+	if (BoxBP.Object)
+	{
+		BoxBlueprint = (UClass*)BoxBP.Object->GeneratedClass;
+	}
+
 	CreateTimeLine();
 }
 
@@ -28,15 +40,30 @@ void ATimeSplinePawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (SetOtherActor() == false)
+		return;
 	LoadCurve();
 	LoadSpline();
 	AddTimeLineEvent();
 	StartMovieTimeline();
 }
 
-void ATimeSplinePawn::SetOtherActor(AActor* Actor)
+bool ATimeSplinePawn::SetOtherActor()
 {
-	OtherActor = Actor;
+	OtherActor = nullptr;
+
+	TArray<AActor*> BoxActorList;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BoxBlueprint, BoxActorList);
+	if (BoxActorList.Num() > 0)
+	{
+		bool OutBluePrintActiveValue = 0;
+		GetBluePrintVariable(BoxActorList[0], TEXT("ActiveMove"), OutBluePrintActiveValue);
+		if (OutBluePrintActiveValue)
+			return false;
+		OtherActor = BoxActorList[0];
+	}
+
+	return true;
 }
 
 void ATimeSplinePawn::StartMovieTimeline()
@@ -153,3 +180,4 @@ float ATimeSplinePawn::GetSplineDistanceByAlpha(float Alpha)
 	float Length = SplineComponent->GetSplineLength();
 	return FMath::Lerp(0.0f, Length, Alpha);
 }
+#pragma optimize( "", on )

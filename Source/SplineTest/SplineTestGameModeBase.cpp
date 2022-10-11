@@ -49,11 +49,6 @@ bool GetBluePrintVariable(UObject* Target, FString VariableName, bool& OutValue)
 
 ASplineTestGameModeBase::ASplineTestGameModeBase()
 {
-	static ConstructorHelpers::FObjectFinder<UBlueprint> BoxBP(TEXT("Blueprint'/Game/Blueprints/Box_BP.Box_BP'"));
-	if (BoxBP.Object)
-	{
-		BoxBlueprint = (UClass*)BoxBP.Object->GeneratedClass;
-	}
 }
 
 void ASplineTestGameModeBase::StartPlay()
@@ -73,17 +68,6 @@ void ASplineTestGameModeBase::SpawnTimeSpline()
 		return;
 
 	ATimeSplinePawn* TimeSplinePawn = GetWorld()->SpawnActor<ATimeSplinePawn>(ATimeSplinePawn::StaticClass());
-
-	TArray<AActor*> BoxActorList;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BoxBlueprint, BoxActorList);
-	if (BoxActorList.Num() > 0)
-	{
-		bool OutBluePrintActiveValue = 0;
-		GetBluePrintVariable(BoxActorList[0], TEXT("ActiveMove"), OutBluePrintActiveValue);
-		if (OutBluePrintActiveValue)
-			return;
-		TimeSplinePawn->SetOtherActor(BoxActorList[0]);
-	}
 }
 
 //블루프린트를 로딩해서 블루프린트의 USplineComponent 컴포넌트에 접근한다.

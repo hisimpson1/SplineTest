@@ -21,8 +21,4 @@ public:
 private:
 	void LoadBluePrintTest();
 	void SpawnTimeSpline();
-
-private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AActor> BoxBlueprint;
 };
